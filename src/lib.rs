@@ -27,7 +27,6 @@
 
 use std::ffi::OsString;
 use std::fmt;
-use std::future::Future;
 use std::io::{self, SeekFrom};
 use std::path::{Path, PathBuf};
 use std::pin::Pin;
@@ -40,11 +39,11 @@ use std::os::unix::fs::{DirEntryExt as _, OpenOptionsExt as _};
 #[cfg(windows)]
 use std::os::windows::fs::OpenOptionsExt as _;
 
-use async_lock::Mutex;
-use blocking::{unblock, Unblock};
-use futures_lite::io::{AsyncRead, AsyncSeek, AsyncWrite, AsyncWriteExt};
-use futures_lite::stream::Stream;
-use futures_lite::{future, ready};
+use futures::lock::Mutex;
+use superpoll_blocking::{unblock, Unblock};
+use futures::io::{AsyncRead, AsyncSeek, AsyncWrite, AsyncWriteExt};
+use futures::stream::Stream;
+use futures::{future::Future, ready};
 
 #[doc(no_inline)]
 pub use std::fs::{FileType, Metadata, Permissions};
@@ -271,12 +270,14 @@ pub async fn read_dir<P: AsRef<Path>>(path: P) -> io::Result<ReadDir> {
 /// path or metadata.
 pub struct ReadDir(State);
 
+type BoxedFuture<T> = Pin<Box<dyn Future<Output = T> + Send + 'static>>;
+
 /// The state of an asynchronous `ReadDir`.
 ///
 /// The `ReadDir` can be either idle or busy performing an asynchronous operation.
 enum State {
     Idle(Option<std::fs::ReadDir>),
-    Busy(future::Boxed<(std::fs::ReadDir, Option<io::Result<std::fs::DirEntry>>)>),
+    Busy(BoxedFuture<(std::fs::ReadDir, Option<io::Result<std::fs::DirEntry>>)>),
 }
 
 impl fmt::Debug for ReadDir {

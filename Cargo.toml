@@ -13,9 +13,11 @@ categories = ["asynchronous", "concurrency"]
 readme = "README.md"
 
 [dependencies]
-async-lock = "2.3.0"
-blocking = "1.0.0"
-futures-lite = "1.2.0"
+#async-lock = "2.3.0"
+#blocking = "1.0.0"
+#futures-lite = "1.2.0"
+superpoll-blocking = {path = "../superpoll-blocking"}
+futures = "0.3.8"
 
 [target.'cfg(unix)'.dev-dependencies]
 libc = "0.2.78"
