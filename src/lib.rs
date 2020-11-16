@@ -13,10 +13,10 @@
 //! Create a new file and write some bytes to it:
 //!
 //! ```no_run
-//! use async_fs::File;
-//! use futures_lite::io::AsyncWriteExt;
+//! use superpoll_fs::File;
+//! use futures::io::AsyncWriteExt;
 //!
-//! # futures_lite::future::block_on(async {
+//! # futures::executor::block_on(async {
 //! let mut file = File::create("a.txt").await?;
 //! file.write_all(b"Hello, world!").await?;
 //! file.flush().await?;
@@ -64,8 +64,8 @@ pub use std::fs::{FileType, Metadata, Permissions};
 /// # Examples
 ///
 /// ```no_run
-/// # futures_lite::future::block_on(async {
-/// let path = async_fs::canonicalize(".").await?;
+/// # futures::executor::block_on(async {
+/// let path = superpoll_fs::canonicalize(".").await?;
 /// # std::io::Result::Ok(()) });
 /// ```
 pub async fn canonicalize<P: AsRef<Path>>(path: P) -> io::Result<PathBuf> {
@@ -82,7 +82,7 @@ pub async fn canonicalize<P: AsRef<Path>>(path: P) -> io::Result<PathBuf> {
 /// file, then the file will likely get truncated as a result of this operation.
 ///
 /// If you're working with open [`File`]s and want to copy contents through those types, use
-/// [`futures_lite::io::copy()`] instead.
+/// [`futures::io::copy()`] instead.
 ///
 /// # Errors
 ///
@@ -95,8 +95,8 @@ pub async fn canonicalize<P: AsRef<Path>>(path: P) -> io::Result<PathBuf> {
 /// # Examples
 ///
 /// ```no_run
-/// # futures_lite::future::block_on(async {
-/// let num_bytes = async_fs::copy("a.txt", "b.txt").await?;
+/// # futures::executor::block_on(async {
+/// let num_bytes = superpoll_fs::copy("a.txt", "b.txt").await?;
 /// # std::io::Result::Ok(()) });
 /// ```
 pub async fn copy<P: AsRef<Path>, Q: AsRef<Path>>(src: P, dst: Q) -> io::Result<u64> {
@@ -122,8 +122,8 @@ pub async fn copy<P: AsRef<Path>, Q: AsRef<Path>>(src: P, dst: Q) -> io::Result<
 /// # Examples
 ///
 /// ```no_run
-/// # futures_lite::future::block_on(async {
-/// async_fs::create_dir("./some/directory").await?;
+/// # futures::executor::block_on(async {
+/// superpoll_fs::create_dir("./some/directory").await?;
 /// # std::io::Result::Ok(()) });
 /// ```
 pub async fn create_dir<P: AsRef<Path>>(path: P) -> io::Result<()> {
@@ -144,8 +144,8 @@ pub async fn create_dir<P: AsRef<Path>>(path: P) -> io::Result<()> {
 /// # Examples
 ///
 /// ```no_run
-/// # futures_lite::future::block_on(async {
-/// async_fs::create_dir_all("./some/directory").await?;
+/// # futures::executor::block_on(async {
+/// superpoll_fs::create_dir_all("./some/directory").await?;
 /// # std::io::Result::Ok(()) });
 /// ```
 pub async fn create_dir_all<P: AsRef<Path>>(path: P) -> io::Result<()> {
@@ -168,8 +168,8 @@ pub async fn create_dir_all<P: AsRef<Path>>(path: P) -> io::Result<()> {
 /// # Examples
 ///
 /// ```no_run
-/// # futures_lite::future::block_on(async {
-/// async_fs::hard_link("a.txt", "b.txt").await?;
+/// # futures::executor::block_on(async {
+/// superpoll_fs::hard_link("a.txt", "b.txt").await?;
 /// # std::io::Result::Ok(()) });
 /// ```
 pub async fn hard_link<P: AsRef<Path>, Q: AsRef<Path>>(src: P, dst: Q) -> io::Result<()> {
@@ -195,8 +195,8 @@ pub async fn hard_link<P: AsRef<Path>, Q: AsRef<Path>>(src: P, dst: Q) -> io::Re
 /// # Examples
 ///
 /// ```no_run
-/// # futures_lite::future::block_on(async {
-/// let perm = async_fs::metadata("a.txt").await?.permissions();
+/// # futures::executor::block_on(async {
+/// let perm = superpoll_fs::metadata("a.txt").await?.permissions();
 /// # std::io::Result::Ok(()) });
 /// ```
 pub async fn metadata<P: AsRef<Path>>(path: P) -> io::Result<Metadata> {
@@ -223,8 +223,8 @@ pub async fn metadata<P: AsRef<Path>>(path: P) -> io::Result<Metadata> {
 /// # Examples
 ///
 /// ```no_run
-/// # futures_lite::future::block_on(async {
-/// let contents = async_fs::read("a.txt").await?;
+/// # futures::executor::block_on(async {
+/// let contents = superpoll_fs::read("a.txt").await?;
 /// # std::io::Result::Ok(()) });
 /// ```
 pub async fn read<P: AsRef<Path>>(path: P) -> io::Result<Vec<u8>> {
@@ -248,10 +248,10 @@ pub async fn read<P: AsRef<Path>>(path: P) -> io::Result<Vec<u8>> {
 /// # Examples
 ///
 /// ```no_run
-/// # futures_lite::future::block_on(async {
-/// use futures_lite::stream::StreamExt;
+/// # futures::executor::block_on(async {
+/// use futures::stream::TryStreamExt;
 ///
-/// let mut entries = async_fs::read_dir(".").await?;
+/// let mut entries = superpoll_fs::read_dir(".").await?;
 ///
 /// while let Some(entry) = entries.try_next().await? {
 ///     println!("{}", entry.file_name().to_string_lossy());
@@ -328,10 +328,10 @@ impl DirEntry {
     /// # Examples
     ///
     /// ```no_run
-    /// use futures_lite::stream::StreamExt;
+    /// use futures::stream::TryStreamExt;
     ///
-    /// # futures_lite::future::block_on(async {
-    /// let mut dir = async_fs::read_dir(".").await?;
+    /// # futures::executor::block_on(async {
+    /// let mut dir = superpoll_fs::read_dir(".").await?;
     ///
     /// while let Some(entry) = dir.try_next().await? {
     ///     println!("{:?}", entry.path());
@@ -360,10 +360,10 @@ impl DirEntry {
     /// # Examples
     ///
     /// ```no_run
-    /// use futures_lite::stream::StreamExt;
+    /// use futures::stream::TryStreamExt;
     ///
-    /// # futures_lite::future::block_on(async {
-    /// let mut dir = async_fs::read_dir(".").await?;
+    /// # futures::executor::block_on(async {
+    /// let mut dir = superpoll_fs::read_dir(".").await?;
     ///
     /// while let Some(entry) = dir.try_next().await? {
     ///     println!("{:?}", entry.metadata().await?);
@@ -392,10 +392,10 @@ impl DirEntry {
     /// # Examples
     ///
     /// ```no_run
-    /// use futures_lite::stream::StreamExt;
+    /// use futures::stream::TryStreamExt;
     ///
-    /// # futures_lite::future::block_on(async {
-    /// let mut dir = async_fs::read_dir(".").await?;
+    /// # futures::executor::block_on(async {
+    /// let mut dir = superpoll_fs::read_dir(".").await?;
     ///
     /// while let Some(entry) = dir.try_next().await? {
     ///     println!("{:?}", entry.file_type().await?);
@@ -412,10 +412,10 @@ impl DirEntry {
     /// # Examples
     ///
     /// ```no_run
-    /// use futures_lite::stream::StreamExt;
+    /// use futures::stream::TryStreamExt;
     ///
-    /// # futures_lite::future::block_on(async {
-    /// let mut dir = async_fs::read_dir(".").await?;
+    /// # futures::executor::block_on(async {
+    /// let mut dir = superpoll_fs::read_dir(".").await?;
     ///
     /// while let Some(entry) = dir.try_next().await? {
     ///     println!("{}", entry.file_name().to_string_lossy());
@@ -458,8 +458,8 @@ impl unix::DirEntryExt for DirEntry {
 /// # Examples
 ///
 /// ```no_run
-/// # futures_lite::future::block_on(async {
-/// let path = async_fs::read_link("a.txt").await?;
+/// # futures::executor::block_on(async {
+/// let path = superpoll_fs::read_link("a.txt").await?;
 /// # std::io::Result::Ok(()) });
 /// ```
 pub async fn read_link<P: AsRef<Path>>(path: P) -> io::Result<PathBuf> {
@@ -487,8 +487,8 @@ pub async fn read_link<P: AsRef<Path>>(path: P) -> io::Result<PathBuf> {
 /// # Examples
 ///
 /// ```no_run
-/// # futures_lite::future::block_on(async {
-/// let contents = async_fs::read_to_string("a.txt").await?;
+/// # futures::executor::block_on(async {
+/// let contents = superpoll_fs::read_to_string("a.txt").await?;
 /// # std::io::Result::Ok(()) });
 /// ```
 pub async fn read_to_string<P: AsRef<Path>>(path: P) -> io::Result<String> {
@@ -512,8 +512,8 @@ pub async fn read_to_string<P: AsRef<Path>>(path: P) -> io::Result<String> {
 /// # Examples
 ///
 /// ```no_run
-/// # futures_lite::future::block_on(async {
-/// async_fs::remove_dir("./some/directory").await?;
+/// # futures::executor::block_on(async {
+/// superpoll_fs::remove_dir("./some/directory").await?;
 /// # std::io::Result::Ok(()) });
 /// ```
 pub async fn remove_dir<P: AsRef<Path>>(path: P) -> io::Result<()> {
@@ -534,8 +534,8 @@ pub async fn remove_dir<P: AsRef<Path>>(path: P) -> io::Result<()> {
 /// # Examples
 ///
 /// ```no_run
-/// # futures_lite::future::block_on(async {
-/// async_fs::remove_dir_all("./some/directory").await?;
+/// # futures::executor::block_on(async {
+/// superpoll_fs::remove_dir_all("./some/directory").await?;
 /// # std::io::Result::Ok(()) });
 /// ```
 pub async fn remove_dir_all<P: AsRef<Path>>(path: P) -> io::Result<()> {
@@ -556,8 +556,8 @@ pub async fn remove_dir_all<P: AsRef<Path>>(path: P) -> io::Result<()> {
 /// # Examples
 ///
 /// ```no_run
-/// # futures_lite::future::block_on(async {
-/// async_fs::remove_file("a.txt").await?;
+/// # futures::executor::block_on(async {
+/// superpoll_fs::remove_file("a.txt").await?;
 /// # std::io::Result::Ok(()) });
 /// ```
 pub async fn remove_file<P: AsRef<Path>>(path: P) -> io::Result<()> {
@@ -582,8 +582,8 @@ pub async fn remove_file<P: AsRef<Path>>(path: P) -> io::Result<()> {
 /// # Examples
 ///
 /// ```no_run
-/// # futures_lite::future::block_on(async {
-/// async_fs::rename("a.txt", "b.txt").await?;
+/// # futures::executor::block_on(async {
+/// superpoll_fs::rename("a.txt", "b.txt").await?;
 /// # std::io::Result::Ok(()) });
 /// ```
 pub async fn rename<P: AsRef<Path>, Q: AsRef<Path>>(src: P, dst: Q) -> io::Result<()> {
@@ -605,10 +605,10 @@ pub async fn rename<P: AsRef<Path>, Q: AsRef<Path>>(src: P, dst: Q) -> io::Resul
 /// # Examples
 ///
 /// ```no_run
-/// # futures_lite::future::block_on(async {
-/// let mut perm = async_fs::metadata("a.txt").await?.permissions();
+/// # futures::executor::block_on(async {
+/// let mut perm = superpoll_fs::metadata("a.txt").await?.permissions();
 /// perm.set_readonly(true);
-/// async_fs::set_permissions("a.txt", perm).await?;
+/// superpoll_fs::set_permissions("a.txt", perm).await?;
 /// # std::io::Result::Ok(()) });
 /// ```
 pub async fn set_permissions<P: AsRef<Path>>(path: P, perm: Permissions) -> io::Result<()> {
@@ -632,8 +632,8 @@ pub async fn set_permissions<P: AsRef<Path>>(path: P, perm: Permissions) -> io::
 /// # Examples
 ///
 /// ```no_run
-/// # futures_lite::future::block_on(async {
-/// let perm = async_fs::symlink_metadata("a.txt").await?.permissions();
+/// # futures::executor::block_on(async {
+/// let perm = superpoll_fs::symlink_metadata("a.txt").await?.permissions();
 /// # std::io::Result::Ok(()) });
 /// ```
 pub async fn symlink_metadata<P: AsRef<Path>>(path: P) -> io::Result<Metadata> {
@@ -657,8 +657,8 @@ pub async fn symlink_metadata<P: AsRef<Path>>(path: P) -> io::Result<Metadata> {
 /// # Examples
 ///
 /// ```no_run
-/// # futures_lite::future::block_on(async {
-/// async_fs::write("a.txt", b"Hello world!").await?;
+/// # futures::executor::block_on(async {
+/// superpoll_fs::write("a.txt", b"Hello world!").await?;
 /// # std::io::Result::Ok(()) });
 /// ```
 pub async fn write<P: AsRef<Path>, C: AsRef<[u8]>>(path: P, contents: C) -> io::Result<()> {
@@ -689,7 +689,7 @@ impl DirBuilder {
     /// # Examples
     ///
     /// ```
-    /// use async_fs::DirBuilder;
+    /// use superpoll_fs::DirBuilder;
     ///
     /// let builder = DirBuilder::new();
     /// ```
@@ -716,7 +716,7 @@ impl DirBuilder {
     /// # Examples
     ///
     /// ```
-    /// use async_fs::DirBuilder;
+    /// use superpoll_fs::DirBuilder;
     ///
     /// let mut builder = DirBuilder::new();
     /// builder.recursive(true);
@@ -741,9 +741,9 @@ impl DirBuilder {
     /// # Examples
     ///
     /// ```no_run
-    /// use async_fs::DirBuilder;
+    /// use superpoll_fs::DirBuilder;
     ///
-    /// # futures_lite::future::block_on(async {
+    /// # futures::executor::block_on(async {
     /// DirBuilder::new()
     ///     .recursive(true)
     ///     .create("./some/directory")
@@ -784,7 +784,7 @@ impl unix::DirBuilderExt for DirBuilder {
 /// errors need to be handled.
 ///
 /// **NOTE:** If writing to a file, make sure to call
-/// [`flush()`][`futures_lite::io::AsyncWriteExt::flush()`], [`sync_data()`][`File::sync_data()`],
+/// [`flush()`][`futures::io::AsyncWriteExt::flush()`], [`sync_data()`][`File::sync_data()`],
 /// or [`sync_all()`][`File::sync_all()`] before dropping the file or else some written data
 /// might get lost!
 ///
@@ -793,10 +793,10 @@ impl unix::DirBuilderExt for DirBuilder {
 /// Create a new file and write some bytes to it:
 ///
 /// ```no_run
-/// use async_fs::File;
-/// use futures_lite::io::AsyncWriteExt;
+/// use superpoll_fs::File;
+/// use futures::io::AsyncWriteExt;
 ///
-/// # futures_lite::future::block_on(async {
+/// # futures::executor::block_on(async {
 /// let mut file = File::create("a.txt").await?;
 ///
 /// file.write_all(b"Hello, world!").await?;
@@ -807,10 +807,10 @@ impl unix::DirBuilderExt for DirBuilder {
 /// Read the contents of a file into a vector of bytes:
 ///
 /// ```no_run
-/// use async_fs::File;
-/// use futures_lite::io::AsyncReadExt;
+/// use superpoll_fs::File;
+/// use futures::io::AsyncReadExt;
 ///
-/// # futures_lite::future::block_on(async {
+/// # futures::executor::block_on(async {
 /// let mut file = File::open("a.txt").await?;
 ///
 /// let mut contents = Vec::new();
@@ -864,9 +864,9 @@ impl File {
     /// # Examples
     ///
     /// ```no_run
-    /// use async_fs::File;
+    /// use superpoll_fs::File;
     ///
-    /// # futures_lite::future::block_on(async {
+    /// # futures::executor::block_on(async {
     /// let file = File::open("a.txt").await?;
     /// # std::io::Result::Ok(()) });
     /// ```
@@ -895,9 +895,9 @@ impl File {
     /// # Examples
     ///
     /// ```no_run
-    /// use async_fs::File;
+    /// use superpoll_fs::File;
     ///
-    /// # futures_lite::future::block_on(async {
+    /// # futures::executor::block_on(async {
     /// let file = File::create("a.txt").await?;
     /// # std::io::Result::Ok(()) });
     /// ```
@@ -917,10 +917,10 @@ impl File {
     /// # Examples
     ///
     /// ```no_run
-    /// use async_fs::File;
-    /// use futures_lite::io::AsyncWriteExt;
+    /// use superpoll_fs::File;
+    /// use futures::io::AsyncWriteExt;
     ///
-    /// # futures_lite::future::block_on(async {
+    /// # futures::executor::block_on(async {
     /// let mut file = File::create("a.txt").await?;
     ///
     /// file.write_all(b"Hello, world!").await?;
@@ -948,10 +948,10 @@ impl File {
     /// # Examples
     ///
     /// ```no_run
-    /// use async_fs::File;
-    /// use futures_lite::io::AsyncWriteExt;
+    /// use superpoll_fs::File;
+    /// use futures::io::AsyncWriteExt;
     ///
-    /// # futures_lite::future::block_on(async {
+    /// # futures::executor::block_on(async {
     /// let mut file = File::create("a.txt").await?;
     ///
     /// file.write_all(b"Hello, world!").await?;
@@ -977,9 +977,9 @@ impl File {
     /// # Examples
     ///
     /// ```no_run
-    /// use async_fs::File;
+    /// use superpoll_fs::File;
     ///
-    /// # futures_lite::future::block_on(async {
+    /// # futures::executor::block_on(async {
     /// let mut file = File::create("a.txt").await?;
     /// file.set_len(10).await?;
     /// # std::io::Result::Ok(()) });
@@ -996,9 +996,9 @@ impl File {
     /// # Examples
     ///
     /// ```no_run
-    /// use async_fs::File;
+    /// use superpoll_fs::File;
     ///
-    /// # futures_lite::future::block_on(async {
+    /// # futures::executor::block_on(async {
     /// let file = File::open("a.txt").await?;
     /// let metadata = file.metadata().await?;
     /// # std::io::Result::Ok(()) });
@@ -1020,9 +1020,9 @@ impl File {
     /// # Examples
     ///
     /// ```no_run
-    /// use async_fs::File;
+    /// use superpoll_fs::File;
     ///
-    /// # futures_lite::future::block_on(async {
+    /// # futures::executor::block_on(async {
     /// let file = File::create("a.txt").await?;
     ///
     /// let mut perms = file.metadata().await?.permissions();
@@ -1192,9 +1192,9 @@ impl io::Seek for ArcFile {
 /// Open a file for reading:
 ///
 /// ```no_run
-/// use async_fs::OpenOptions;
+/// use superpoll_fs::OpenOptions;
 ///
-/// # futures_lite::future::block_on(async {
+/// # futures::executor::block_on(async {
 /// let file = OpenOptions::new()
 ///     .read(true)
 ///     .open("a.txt")
@@ -1205,9 +1205,9 @@ impl io::Seek for ArcFile {
 /// Open a file for both reading and writing, and create it if it doesn't exist yet:
 ///
 /// ```no_run
-/// use async_fs::OpenOptions;
+/// use superpoll_fs::OpenOptions;
 ///
-/// # futures_lite::future::block_on(async {
+/// # futures::executor::block_on(async {
 /// let file = OpenOptions::new()
 ///     .read(true)
 ///     .write(true)
@@ -1227,9 +1227,9 @@ impl OpenOptions {
     /// # Examples
     ///
     /// ```no_run
-    /// use async_fs::OpenOptions;
+    /// use superpoll_fs::OpenOptions;
     ///
-    /// # futures_lite::future::block_on(async {
+    /// # futures::executor::block_on(async {
     /// let file = OpenOptions::new()
     ///     .read(true)
     ///     .open("a.txt")
@@ -1247,9 +1247,9 @@ impl OpenOptions {
     /// # Examples
     ///
     /// ```no_run
-    /// use async_fs::OpenOptions;
+    /// use superpoll_fs::OpenOptions;
     ///
-    /// # futures_lite::future::block_on(async {
+    /// # futures::executor::block_on(async {
     /// let file = OpenOptions::new()
     ///     .read(true)
     ///     .open("a.txt")
@@ -1271,9 +1271,9 @@ impl OpenOptions {
     /// # Examples
     ///
     /// ```no_run
-    /// use async_fs::OpenOptions;
+    /// use superpoll_fs::OpenOptions;
     ///
-    /// # futures_lite::future::block_on(async {
+    /// # futures::executor::block_on(async {
     /// let file = OpenOptions::new()
     ///     .write(true)
     ///     .open("a.txt")
@@ -1293,9 +1293,9 @@ impl OpenOptions {
     /// # Examples
     ///
     /// ```no_run
-    /// use async_fs::OpenOptions;
+    /// use superpoll_fs::OpenOptions;
     ///
-    /// # futures_lite::future::block_on(async {
+    /// # futures::executor::block_on(async {
     /// let file = OpenOptions::new()
     ///     .append(true)
     ///     .open("a.txt")
@@ -1317,9 +1317,9 @@ impl OpenOptions {
     /// # Examples
     ///
     /// ```no_run
-    /// use async_fs::OpenOptions;
+    /// use superpoll_fs::OpenOptions;
     ///
-    /// # futures_lite::future::block_on(async {
+    /// # futures::executor::block_on(async {
     /// let file = OpenOptions::new()
     ///     .write(true)
     ///     .truncate(true)
@@ -1342,9 +1342,9 @@ impl OpenOptions {
     /// # Examples
     ///
     /// ```no_run
-    /// use async_fs::OpenOptions;
+    /// use superpoll_fs::OpenOptions;
     ///
-    /// # futures_lite::future::block_on(async {
+    /// # futures::executor::block_on(async {
     /// let file = OpenOptions::new()
     ///     .write(true)
     ///     .create(true)
@@ -1368,9 +1368,9 @@ impl OpenOptions {
     /// # Examples
     ///
     /// ```no_run
-    /// use async_fs::OpenOptions;
+    /// use superpoll_fs::OpenOptions;
     ///
-    /// # futures_lite::future::block_on(async {
+    /// # futures::executor::block_on(async {
     /// let file = OpenOptions::new()
     ///     .write(true)
     ///     .create_new(true)
@@ -1408,9 +1408,9 @@ impl OpenOptions {
     /// # Examples
     ///
     /// ```no_run
-    /// use async_fs::OpenOptions;
+    /// use superpoll_fs::OpenOptions;
     ///
-    /// # futures_lite::future::block_on(async {
+    /// # futures::executor::block_on(async {
     /// let file = OpenOptions::new()
     ///     .read(true)
     ///     .open("a.txt")
@@ -1489,8 +1489,8 @@ pub mod unix {
     /// # Examples
     ///
     /// ```no_run
-    /// # futures_lite::future::block_on(async {
-    /// async_fs::unix::symlink("a.txt", "b.txt").await?;
+    /// # futures::executor::block_on(async {
+    /// superpoll_fs::unix::symlink("a.txt", "b.txt").await?;
     /// # std::io::Result::Ok(()) });
     /// ```
     pub async fn symlink<P: AsRef<Path>, Q: AsRef<Path>>(src: P, dst: Q) -> io::Result<()> {
@@ -1508,7 +1508,7 @@ pub mod unix {
         /// # Examples
         ///
         /// ```no_run
-        /// use async_fs::{DirBuilder, unix::DirBuilderExt};
+        /// use superpoll_fs::{DirBuilder, unix::DirBuilderExt};
         ///
         /// let mut builder = DirBuilder::new();
         /// builder.mode(0o755);
@@ -1523,11 +1523,11 @@ pub mod unix {
         /// # Examples
         ///
         /// ```no_run
-        /// use async_fs::unix::DirEntryExt;
-        /// use futures_lite::stream::StreamExt;
+        /// use superpoll_fs::unix::DirEntryExt;
+        /// use futures::stream::TryStreamExt;
         ///
-        /// # futures_lite::future::block_on(async {
-        /// let mut entries = async_fs::read_dir(".").await?;
+        /// # futures::executor::block_on(async {
+        /// let mut entries = superpoll_fs::read_dir(".").await?;
         ///
         /// while let Some(entry) = entries.try_next().await? {
         ///     println!("{:?}: {}", entry.file_name(), entry.ino());
@@ -1551,9 +1551,9 @@ pub mod unix {
         /// # Examples
         ///
         /// ```no_run
-        /// use async_fs::{OpenOptions, unix::OpenOptionsExt};
+        /// use superpoll_fs::{OpenOptions, unix::OpenOptionsExt};
         ///
-        /// # futures_lite::future::block_on(async {
+        /// # futures::executor::block_on(async {
         /// let mut options = OpenOptions::new();
         /// // Read/write permissions for owner and read permissions for others.
         /// options.mode(0o644);
@@ -1573,9 +1573,9 @@ pub mod unix {
         /// # Examples
         ///
         /// ```no_run
-        /// use async_fs::{OpenOptions, unix::OpenOptionsExt};
+        /// use superpoll_fs::{OpenOptions, unix::OpenOptionsExt};
         ///
-        /// # futures_lite::future::block_on(async {
+        /// # futures::executor::block_on(async {
         /// let mut options = OpenOptions::new();
         /// options.write(true);
         /// options.custom_flags(libc::O_NOFOLLOW);
@@ -1601,8 +1601,8 @@ pub mod windows {
     /// # Examples
     ///
     /// ```no_run
-    /// # futures_lite::future::block_on(async {
-    /// async_fs::windows::symlink_dir("a", "b").await?;
+    /// # futures::executor::block_on(async {
+    /// superpoll_fs::windows::symlink_dir("a", "b").await?;
     /// # std::io::Result::Ok(()) });
     /// ```
     pub async fn symlink_dir<P: AsRef<Path>, Q: AsRef<Path>>(src: P, dst: Q) -> io::Result<()> {
@@ -1618,8 +1618,8 @@ pub mod windows {
     /// # Examples
     ///
     /// ```no_run
-    /// # futures_lite::future::block_on(async {
-    /// async_fs::windows::symlink_file("a.txt", "b.txt").await?;
+    /// # futures::executor::block_on(async {
+    /// superpoll_fs::windows::symlink_file("a.txt", "b.txt").await?;
     /// # std::io::Result::Ok(()) });
     /// ```
     pub async fn symlink_file<P: AsRef<Path>, Q: AsRef<Path>>(src: P, dst: Q) -> io::Result<()> {
@@ -1641,9 +1641,9 @@ pub mod windows {
         /// # Examples
         ///
         /// ```no_run
-        /// use async_fs::{OpenOptions, windows::OpenOptionsExt};
+        /// use superpoll_fs::{OpenOptions, windows::OpenOptionsExt};
         ///
-        /// # futures_lite::future::block_on(async {
+        /// # futures::executor::block_on(async {
         /// // Open without read and write permission, for example if you only need
         /// // to call `stat` on the file
         /// let file = OpenOptions::new().access_mode(0).open("foo.txt").await?;
@@ -1666,9 +1666,9 @@ pub mod windows {
         /// # Examples
         ///
         /// ```no_run
-        /// use async_fs::{OpenOptions, windows::OpenOptionsExt};
+        /// use superpoll_fs::{OpenOptions, windows::OpenOptionsExt};
         ///
-        /// # futures_lite::future::block_on(async {
+        /// # futures::executor::block_on(async {
         /// // Do not allow others to read or modify this file while we have it open
         /// // for writing.
         /// let file = OpenOptions::new()
@@ -1693,9 +1693,9 @@ pub mod windows {
         /// # Examples
         ///
         /// ```no_run
-        /// use async_fs::{OpenOptions, windows::OpenOptionsExt};
+        /// use superpoll_fs::{OpenOptions, windows::OpenOptionsExt};
         ///
-        /// # futures_lite::future::block_on(async {
+        /// # futures::executor::block_on(async {
         /// let file = OpenOptions::new()
         ///     .create(true)
         ///     .write(true)
@@ -1727,9 +1727,9 @@ pub mod windows {
         /// # Examples
         ///
         /// ```no_run
-        /// use async_fs::{OpenOptions, windows::OpenOptionsExt};
+        /// use superpoll_fs::{OpenOptions, windows::OpenOptionsExt};
         ///
-        /// # futures_lite::future::block_on(async {
+        /// # futures::executor::block_on(async {
         /// let file = OpenOptions::new()
         ///     .write(true)
         ///     .create(true)
@@ -1765,9 +1765,9 @@ pub mod windows {
         /// # Examples
         ///
         /// ```no_run
-        /// use async_fs::{OpenOptions, windows::OpenOptionsExt};
+        /// use superpoll_fs::{OpenOptions, windows::OpenOptionsExt};
         ///
-        /// # futures_lite::future::block_on(async {
+        /// # futures::executor::block_on(async {
         /// let file = OpenOptions::new()
         ///     .write(true)
         ///     .create(true)
