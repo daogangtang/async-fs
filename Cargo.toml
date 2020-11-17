@@ -5,18 +5,15 @@ authors = ["Stjepan Glavina <stjepang@gmail.com>", "Daogang Tang <daogangtang@gm
 edition = "2018"
 description = "Async filesystem primitives"
 license = "Apache-2.0 OR MIT"
-repository = "https://github.com/stjepang/async-fs"
-homepage = "https://github.com/stjepang/async-fs"
-documentation = "https://docs.rs/async-fs"
+repository = "https://github.com/daogangtang/superpoll-fs"
+homepage = "https://github.com/daogangtang/superpoll-fs"
+documentation = ""
 keywords = ["asynchronous", "file", "filesystem", "io"]
 categories = ["asynchronous", "concurrency"]
 readme = "README.md"
 
 [dependencies]
-#async-lock = "2.3.0"
-#blocking = "1.0.0"
-#futures-lite = "1.2.0"
-superpoll-blocking = {path = "../superpoll-blocking"}
+superpoll-blocking = {git = "https://github.com/daogangtang/superpoll-blocking"}
 futures = "0.3.8"
 
 [target.'cfg(unix)'.dev-dependencies]
